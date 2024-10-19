@@ -18,7 +18,8 @@ const healthCheckDB = async () => {
       }
 
       return await new Promise((resolve, reject) => {
-        exec(`docker exec postgres-dev pg_isready`, (error, stdout) => {
+        // exec(`docker exec postgres-dev pg_isready`, (error, stdout) => {
+        exec(`pg_isready -h postgres-dev -p 5432`, (error, stdout) => {
           const healthCheckStatus = stdout;
           console.log('health check postgres: ', healthCheckStatus);
 
