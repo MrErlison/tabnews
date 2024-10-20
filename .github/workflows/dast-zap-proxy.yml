@@ -1,0 +1,33 @@
+name: Dependency-Check
+
+on:
+  push:
+    branches: ["actions-tcc-usp"]
+
+permissions:
+  issues: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  zap_proxy:
+    name: DAST - ZAP Proxy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start containers
+        run: npm run services:up
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm run dev
+
+      - name: Zap Scan
+        uses: zaproxy/action-full-scan@v0.10.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target: "http://localhost/"

@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    branches: ["actions-tcc-usp"]
+
+permissions:
+  issues: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start containers
+        run: npm run services:up
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm run dev
+
+      - name: Stop containers
+        if: always()
+        run: npm run services:down
